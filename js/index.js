@@ -4,6 +4,7 @@ const EMPTY = ''
 const MINE = '<img src="images/mine.png">'
 const FLAG = '<img src="images/flag.png">'
 const LIFE = '👻'
+const HINT = '<img src="images/hint.png">'
 
 var gGame
 var gBoard //start with 4X4 board
@@ -11,11 +12,17 @@ var gMines //start with 2
 var gShownMines
 var gTimeInterval
 var gLives
+var gHintsCount
+var gIsHintOn
+var gHintedCells
 
 var gLevel = { size: 4, mines: 2 }
 
 function onInit() {
   gLives = 3
+  gHintsCount = 3
+  gIsHintOn = false
+  gHintedCells = []
   gShownMines = 0
   var elLife = document.querySelector('.life span')
   var strHTML = ''
@@ -23,6 +30,13 @@ function onInit() {
     strHTML += `<span>${LIFE}</span>`
   }
   elLife.innerHTML = strHTML
+
+  var elHints = document.querySelector('.hints')
+  var strHTML = ''
+  for (let i = 0; i < gHintsCount; i++) {
+    strHTML += `<span class="hint" onclick="onHint(this)">${HINT}</span>`
+  }
+  elHints.innerHTML = strHTML
 
   gGame = {
     isOn: false,
@@ -44,6 +58,12 @@ function onCellClicked(elCell, cellI, cellJ) {
   if (!gGame.isOn) return
   if (gBoard[cellI][cellJ].isShown) return
   if (gBoard[cellI][cellJ].isMarked) return
+
+  if (gIsHintOn) {
+    revealCells(cellI, cellJ)
+    setTimeout(unrevealCells, 1000)
+    return
+  }
 
   //checking what is the content of the cell
   if (gBoard[cellI][cellJ].isMine) {
@@ -113,6 +133,8 @@ function checkGameOver() {
 }
 
 function onCellMarked(elCell, cellI, cellJ) {
+  if (gIsHintOn) return
+
   //first click to start the game and ignore clicks on shown cells
   checkFirstClick()
   if (!gGame.isOn) return
@@ -337,6 +359,58 @@ function reduceLife() {
   elLife.innerHTML = strHTML
 }
 
+function onHint(elHint) {
+  if (elHint.classList.contains('hint-clicked')) {
+    elHint.classList.remove('hint-clicked')
+    elHint.classList.add('hint')
+    gIsHintOn = false
+  } else {
+    elHint.classList.add('hint-clicked')
+    elHint.classList.remove('hint')
+    gIsHintOn = true
+  }
+}
+
+function revealCells(cellI, cellJ) {
+  for (let i = cellI - 1; i <= cellI + 1; i++) {
+    if (i < 0 || i >= gBoard.length) continue
+
+    for (let j = cellJ - 1; j <= cellJ + 1; j++) {
+      if (j < 0 || j >= gBoard[0].length) continue
+      gHintedCells.push({ i: i, j: j })
+      // update model
+      gBoard[i][j].isShown = true
+    }
+  }
+  // update DOM
+  renderBoard(gBoard, '.board-container')
+}
+
+function unrevealCells() {
+  // update model:
+  for (let i = 0; i < gHintedCells.length; i++) {
+    const hintedCell = gHintedCells[i]
+    gBoard[hintedCell.i][hintedCell.j].isShown = false
+  }
+  gHintedCells = []
+  // update DOM
+  renderBoard(gBoard, '.board-container')
+  reduceHintCount()
+}
+
+function reduceHintCount() {
+  gHintsCount--
+
+  var elHints = document.querySelector('.hints')
+  var strHTML = ''
+  for (let i = 0; i < gHintsCount; i++) {
+    strHTML += `<span class="hint" onclick="onHint(this)">${HINT}</span>`
+  }
+  strHTML = !gHintsCount ? 'Out of hints...' : strHTML
+  elHints.innerHTML = strHTML
+
+  gIsHintOn = false
+}
 // function showNegs(board, cellI, cellJ) {
 //   var negs = []
 //   var positions = []

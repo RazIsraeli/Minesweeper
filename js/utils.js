@@ -15,8 +15,9 @@ function renderBoard(board, selector) {
         className += ' mine'
         cellContent = MINE
       }
-
       cellContent = cell.isShown ? cellContent : ''
+      if (cell.isShown) className += ' shown'
+
       if (i === 0) {
         strHTML += `<td class="${className}" onclick="onCellClicked(this,${i},${j})" oncontextmenu="onCellMarked(this,${i},${j})" style="width:40px; height:40px;">${cellContent}</td>`
       } else {

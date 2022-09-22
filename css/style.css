@@ -116,22 +116,50 @@ td img {
   width: 85px;
 }
 .levels:hover {
+  cursor: pointer;
   background-color: black;
   color: white;
 }
 
 .extras-container {
   position: absolute;
-  top: 240px;
-  right: 30px;
+  top: 230px;
+  right: 1px;
   height: 400px;
-  width: 400px;
+  width: 120px;
   border: 1px solid black;
+  padding: 0 auto;
 }
 
 .hints-header {
-  position: absolute;
-  left: 5px;
+  display: block;
+  text-align: left;
+  margin: 0;
+}
+
+.hints {
+  text-align: left;
+}
+
+.hint {
+  border-radius: 50%;
+}
+.hint:hover {
+  position: relative;
+  bottom: 10px;
+  cursor: pointer;
+  box-shadow: 1px 9px 10px 13px rgba(250, 231, 129, 0.81) inset;
+}
+.hints img {
+  width: 25px;
+  height: 25px;
+}
+.hint-clicked {
+  border-radius: 50%;
+  background-color: black;
+}
+.hint-clicked:hover {
+  cursor: pointer;
 }
 
 .shown {
