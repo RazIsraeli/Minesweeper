@@ -9,11 +9,9 @@ var gBoard //start with 4X4 board
 var gMines //start with 2
 var gTimeInterval
 
-var gLevel
+var gLevel = { size: 4, mines: 2 }
 
-function onInit(level = { size: 4, mines: 2 }) {
-  gLevel = level
-
+function onInit() {
   gGame = {
     isOn: false,
     shownCount: 0,
@@ -67,19 +65,7 @@ function onCellClicked(elCell, cellI, cellJ) {
     renderCell({ i: cellI, j: cellJ }, value)
     if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
       checkGameOver()
-  } else showNegs1(gBoard, cellI, cellJ)
-  // else if (
-  //   !gBoard[cellI][cellJ].mineNegsCount &&
-  //   !gBoard[cellI][cellJ].isMine
-  // ) {
-  // showNegs(gBoard, cellI, cellJ)
-  // update model
-  // gBoard[cellI][cellJ].isShown = true
-  // gGame.shownCount++
-  // console.log(gGame.shownCount)
-  // update DOM
-  // var elCell = document.querySelector(`.cell-${cellI}-${cellJ}`)
-  // elCell.classList.add('shown')
+  } else expandShown(gBoard, cellI, cellJ)
   if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
     checkGameOver()
 }
@@ -123,40 +109,6 @@ function cellMarked(elCell, cellI, cellJ) {
     elCell.innerHTML = FLAG
     if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
       checkGameOver()
-  }
-}
-
-function showNegs(board, cellI, cellJ) {
-  var negs = []
-  var positions = []
-  for (let i = cellI - 1; i <= cellI + 1; i++) {
-    if (i < 0 || i >= board.length) continue
-
-    for (let j = cellJ - 1; j <= cellJ + 1; j++) {
-      if (j < 0 || j >= board[0].length) continue
-      if (i === cellI && j === cellJ) continue
-
-      var currCell = board[i][j]
-      if (currCell.isShown || currCell.isMarked) continue
-      if (currCell.mineNegsCount) {
-        negs.push(currCell)
-        positions.push({ i, j })
-      }
-    }
-  }
-  if (!negs.length) return null
-
-  for (let i = 0; i < negs.length; i++) {
-    const neg = negs[i]
-    // update model:
-    neg.isShown = true
-    gGame.shownCount++
-    // update DOM
-    const pos = positions[i]
-    var elCell = document.querySelector(`.cell-${pos.i}-${pos.j}`)
-    elCell.innerText = neg.mineNegsCount
-    elCell.classList.add('shown')
-    renderCell(pos, neg.mineNegsCount)
   }
 }
 
@@ -217,13 +169,13 @@ function buildBoard(size) {
   return board
 }
 
-function restart(level = { size: 4, mines: 2 }) {
+function restart() {
   //clear all settings and reset timer
   gameOver(gGame.isWin)
   document.querySelector('.time span').innerText = gGame.secsPassed
   document.querySelector('.game-icon img').src = 'images/smiley-regular.png'
   gTimeInterval = 0
-  onInit(level)
+  onInit()
 }
 
 function setMinesNegsCount(board, rowIdx, colIdx) {
@@ -270,7 +222,8 @@ function getEmptyLocations() {
 
 function createMine() {
   const cell = {
-    isShown: false,
+    // isShown: false,
+    isShown: true,
     isMine: true,
     isMarked: false,
   }
@@ -287,27 +240,27 @@ function updateNegs() {
 }
 
 function changeLevel(level) {
-  var gameLevel = {}
+  // var gameLevel = {}
 
   switch (level) {
     case 0:
-      gameLevel = { size: 4, mines: 2 }
+      gLevel = { size: 4, mines: 2 }
       break
     case 1:
-      gameLevel = { size: 8, mines: 18 }
+      gLevel = { size: 8, mines: 18 }
       break
     case 2:
-      gameLevel = { size: 12, mines: 32 }
+      gLevel = { size: 12, mines: 32 }
       break
     default:
-      gameLevel = { size: 4, mines: 2 }
+      gLevel = { size: 4, mines: 2 }
       break
   }
 
-  restart(gameLevel)
+  restart()
 }
 
-function showNegs1(board, cellI, cellJ) {
+function expandShown(board, cellI, cellJ) {
   //handle current cell - model and DOM
   gBoard[cellI][cellJ].isShown = true
   gGame.shownCount++
@@ -315,11 +268,11 @@ function showNegs1(board, cellI, cellJ) {
   var elCell = document.querySelector(`.cell-${cellI}-${cellJ}`)
   elCell.classList.add('shown')
   renderCell({ i: cellI, j: cellJ }, '')
-  //check i and j growing only (direction right-bottom)
-  for (let i = cellI; i <= cellI + 1; i++) {
+  //check i and j growing only (direction bottom-right)
+  for (let i = cellI - 1; i <= cellI + 1; i++) {
     if (i < 0 || i >= board.length) continue
 
-    for (let j = cellJ + 1; j <= cellJ + 1; j++) {
+    for (let j = cellJ - 1; j <= cellJ + 1; j++) {
       if (j < 0 || j >= board[0].length) continue
       if (i === cellI && j === cellJ) continue
 
@@ -327,15 +280,7 @@ function showNegs1(board, cellI, cellJ) {
       if (currCell.isShown || currCell.isMarked) continue
       if (currCell.isMine) continue
       if (!currCell.mineNegsCount && !currCell.isMine) {
-        // update the model:
-        // board[i][j].isShown - true
-        // gGame.shownCount++
-        // console.log(gGame.shownCount)
-        // update DOM
-        // var elCell = document.querySelector(`.cell-${i}-${j}`)
-        // elCell.classList.add('shown')
-        // renderCell({ i: i, j: j }, '')
-        showNegs1(board, i, j)
+        expandShown(board, i, j)
       }
       if (currCell.mineNegsCount) {
         // update model
@@ -350,5 +295,37 @@ function showNegs1(board, cellI, cellJ) {
     }
   }
 }
-//TODO
-// Negs1 on the opposite direction (top-left)
+
+// function showNegs(board, cellI, cellJ) {
+//   var negs = []
+//   var positions = []
+//   for (let i = cellI - 1; i <= cellI + 1; i++) {
+//     if (i < 0 || i >= board.length) continue
+
+//     for (let j = cellJ - 1; j <= cellJ + 1; j++) {
+//       if (j < 0 || j >= board[0].length) continue
+//       if (i === cellI && j === cellJ) continue
+
+//       var currCell = board[i][j]
+//       if (currCell.isShown || currCell.isMarked) continue
+//       if (currCell.mineNegsCount) {
+//         negs.push(currCell)
+//         positions.push({ i, j })
+//       }
+//     }
+//   }
+//   if (!negs.length) return null
+
+//   for (let i = 0; i < negs.length; i++) {
+//     const neg = negs[i]
+//     // update model:
+//     neg.isShown = true
+//     gGame.shownCount++
+//     // update DOM
+//     const pos = positions[i]
+//     var elCell = document.querySelector(`.cell-${pos.i}-${pos.j}`)
+//     elCell.innerText = neg.mineNegsCount
+//     elCell.classList.add('shown')
+//     renderCell(pos, neg.mineNegsCount)
+//   }
+// }
