@@ -17,8 +17,11 @@ function renderBoard(board, selector) {
       }
 
       cellContent = cell.isShown ? cellContent : ''
-
-      strHTML += `<td class="${className}" onclick="onCellClicked(this,${i},${j})" oncontextmenu="onCellMarked(this,${i},${j})">${cellContent}</td>`
+      if (i === 0) {
+        strHTML += `<td class="${className}" onclick="onCellClicked(this,${i},${j})" oncontextmenu="onCellMarked(this,${i},${j})" style="width:40px; height:40px;">${cellContent}</td>`
+      } else {
+        strHTML += `<td class="${className}" onclick="onCellClicked(this,${i},${j})" oncontextmenu="onCellMarked(this,${i},${j})" style="height:40px;">${cellContent}</td>`
+      }
     }
     strHTML += '</tr>'
   }

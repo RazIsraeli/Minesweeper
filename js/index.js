@@ -35,9 +35,6 @@ function onInit() {
   gMines = []
   document.addEventListener('contextmenu', (event) => event.preventDefault())
   gBoard = buildBoard(gLevel.size)
-  // createMines()
-  // updateNegs()
-  console.table(gBoard)
   renderBoard(gBoard, '.board-container')
 }
 
@@ -53,8 +50,6 @@ function onCellClicked(elCell, cellI, cellJ) {
     gShownMines++
     gGame.shownCount++
     reduceLife()
-    console.log('gShownMines: ', gShownMines)
-    console.log('Life reduced to ' + gLives)
     //check if out of life
     if (!gLives || gShownMines === gMines.length) {
       // update model
@@ -93,7 +88,6 @@ function onCellClicked(elCell, cellI, cellJ) {
     elCell.innerText = value
     document.querySelector(`.cell-${cellI}-${cellJ}`).classList.add('shown')
     // elCell.classList.add('shown')
-    console.log('added shown to elCell')
     renderCell({ i: cellI, j: cellJ }, value)
     if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
       checkGameOver()
@@ -246,7 +240,7 @@ function getEmptyLocations(cellI, cellJ) {
   var emptyLocations = []
   for (let i = 0; i < gBoard.length; i++) {
     for (let j = 0; j < gBoard[0].length; j++) {
-      if (!i === cellI && j === cellJ) return
+      if (!i === cellI && j === cellJ) continue
 
       emptyLocations.push({ i, j })
     }
