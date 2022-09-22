@@ -240,9 +240,7 @@ function getEmptyLocations(cellI, cellJ) {
   var emptyLocations = []
   for (let i = 0; i < gBoard.length; i++) {
     for (let j = 0; j < gBoard[0].length; j++) {
-      if (!i === cellI && j === cellJ) continue
-
-      emptyLocations.push({ i, j })
+      if (!(i === cellI && j === cellJ)) emptyLocations.push({ i, j })
     }
   }
   if (!emptyLocations.length) return null
