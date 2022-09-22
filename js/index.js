@@ -3,15 +3,27 @@
 const EMPTY = ''
 const MINE = '<img src="images/mine.png">'
 const FLAG = '<img src="images/flag.png">'
+const LIFE = '👻'
 
 var gGame
 var gBoard //start with 4X4 board
 var gMines //start with 2
+var gShownMines
 var gTimeInterval
+var gLives
 
 var gLevel = { size: 4, mines: 2 }
 
 function onInit() {
+  gLives = 3
+  gShownMines = 0
+  var elLife = document.querySelector('.life span')
+  var strHTML = ''
+  for (let i = 0; i < gLives; i++) {
+    strHTML += LIFE
+  }
+  elLife.innerText = strHTML
+
   gGame = {
     isOn: false,
     shownCount: 0,
@@ -38,26 +50,44 @@ function onCellClicked(elCell, cellI, cellJ) {
 
   //checking what is the content of the cell
   if (gBoard[cellI][cellJ].isMine) {
-    // update model
-    for (let i = 0; i < gMines.length; i++) {
-      gMines[i].isShown = true
+    gShownMines++
+    gGame.shownCount++
+    reduceLife()
+    console.log('gShownMines: ', gShownMines)
+    console.log('Life reduced to ' + gLives)
+    //check if out of life
+    if (!gLives || gShownMines === gMines.length) {
+      // update model
+      for (let i = 0; i < gMines.length; i++) {
+        gMines[i].isShown = true
+        gGame.shownCount++
+      }
+      //update DOM
+      var elMines = document.querySelectorAll('.mine')
+      for (let i = 0; i < elMines.length; i++) {
+        const elMine = elMines[i]
+        elMine.innerHTML = MINE
+      }
+      //update model:
+      gBoard[cellI][cellJ].isShown = true
+      // update DOM
+      elCell.innerHTML = MINE
+      elCell.classList.add('shown')
+      elCell.style.backgroundColor = 'rgba(255,0,0,0.4)'
+      gameOver()
+      return
+    } else {
+      //update model:
+      gBoard[cellI][cellJ].isShown = true
+      // update DOM
+      elCell.innerHTML = MINE
+      elCell.classList.add('shown')
+      elCell.style.backgroundColor = 'rgba(255,0,0,0.4)'
     }
-    //update DOM
-    var elMines = document.querySelectorAll('.mine')
-    for (let i = 0; i < elMines.length; i++) {
-      const elMine = elMines[i]
-      elMine.innerHTML = MINE
-    }
-    // elCell.innerHTML = MINE
-    elCell.classList.add('shown')
-    elCell.style.backgroundColor = 'rgba(255,0,0,0.4)'
-    gameOver(gGame.isWin)
-    return
   } else if (gBoard[cellI][cellJ].mineNegsCount) {
     // update model
     gBoard[cellI][cellJ].isShown = true
     gGame.shownCount++
-    console.log(gGame.shownCount)
     // update DOM
     const value = gBoard[cellI][cellJ].mineNegsCount
     elCell.innerText = value
@@ -66,19 +96,17 @@ function onCellClicked(elCell, cellI, cellJ) {
     if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
       checkGameOver()
   } else expandShown(gBoard, cellI, cellJ)
-  if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
-    checkGameOver()
 }
 
 function checkGameOver() {
   console.log('Checking game over')
-  if (gMines.length !== gGame.markedCount) return
+  if (gMines.length !== gGame.markedCount + gShownMines) return
 
   var markedMines = 0
 
   for (let i = 0; i < gMines.length; i++) {
     const currMine = gMines[i]
-    if (currMine.isMarked) markedMines++
+    if (currMine.isMarked || currMine.isShown) markedMines++
     else return
   }
 
@@ -88,7 +116,7 @@ function checkGameOver() {
   }
 }
 
-function cellMarked(elCell, cellI, cellJ) {
+function onCellMarked(elCell, cellI, cellJ) {
   //first click to start the game and ignore clicks on shown cells
   checkFirstClick()
   if (!gGame.isOn) return
@@ -104,7 +132,6 @@ function cellMarked(elCell, cellI, cellJ) {
     // update model
     gBoard[cellI][cellJ].isMarked = true
     gGame.markedCount++
-    console.log(gGame.markedCount)
     //update DOM
     elCell.innerHTML = FLAG
     if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
@@ -139,7 +166,7 @@ function gameOver(isPlayerWin) {
     document.querySelector('.game-icon img').src = 'images/win-face.png'
     //TODO what happens when wins?
     //when the player lost
-  } else if (!isPlayerWin) {
+  } else if (!isPlayerWin || gLives < 0 || gShownMines === gMines.length) {
     console.log('Too bad.. you lost')
     document.querySelector('.game-icon img').src = 'images/lose-face.png'
   }
@@ -263,7 +290,6 @@ function expandShown(board, cellI, cellJ) {
   //handle current cell - model and DOM
   gBoard[cellI][cellJ].isShown = true
   gGame.shownCount++
-  console.log('gGame.shownCount: ', gGame.shownCount)
   var elCell = document.querySelector(`.cell-${cellI}-${cellJ}`)
   elCell.classList.add('shown')
   renderCell({ i: cellI, j: cellJ }, '')
@@ -285,7 +311,6 @@ function expandShown(board, cellI, cellJ) {
         // update model
         board[i][j].isShown = true
         gGame.shownCount++
-        console.log(gGame.shownCount)
         // update DOM
         var elCell = document.querySelector(`.cell-${i}-${j}`)
         elCell.classList.add('shown')
@@ -293,6 +318,22 @@ function expandShown(board, cellI, cellJ) {
       }
     }
   }
+}
+
+function reduceLife() {
+  if (gLives < 0) {
+    gameOver(false)
+    return
+  }
+  // update model
+  gLives--
+  // update DOM
+  var elLife = document.querySelector('.life span')
+  var strHTML = ''
+  for (let i = 0; i < gLives; i++) {
+    strHTML += LIFE
+  }
+  elLife.innerText = strHTML
 }
 
 // function showNegs(board, cellI, cellJ) {
