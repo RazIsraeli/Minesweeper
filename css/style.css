@@ -137,28 +137,35 @@ td img {
   margin: 0;
 }
 
-.hints {
+.hints,
+.safe-clicks,
+.safe-click-container {
   text-align: left;
 }
 
-.hint {
+.hint,
+.safe-click {
   border-radius: 50%;
 }
-.hint:hover {
+.hint:hover,
+.safe-click:hover {
   position: relative;
   bottom: 10px;
   cursor: pointer;
   box-shadow: 1px 9px 10px 13px rgba(250, 231, 129, 0.81) inset;
 }
-.hints img {
+.hints img,
+.safe-click img {
   width: 25px;
   height: 25px;
 }
-.hint-clicked {
+.hint-clicked,
+.safe-click-clicked {
   border-radius: 50%;
   background-color: black;
 }
-.hint-clicked:hover {
+.hint-clicked:hover,
+.safe-click-clicked:hover {
   cursor: pointer;
 }
 

@@ -43,15 +43,17 @@ function getEmptyLocation(board) {
   var emptyLocations = []
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[0].length; j++) {
-      var currCell = board[i][j]
-      if (currCell === ' ') {
+      console.log('board[i][j]: ', board[i][j])
+      if (!board[i][j].isMine && !gBoard[i][j].isShown) {
         var emptyLocation = { i: i, j: j }
+        console.log('emptyLocation: ', emptyLocation)
         emptyLocations.push(emptyLocation)
       }
     }
   }
-  if (emptyLocations.length) return null
+  if (!emptyLocations.length) return null
   const randIdx = getRandomInt(0, emptyLocations.length)
+  console.log('emptyLocations[randIdx]: ', emptyLocations[randIdx])
   return emptyLocations[randIdx]
 }
 

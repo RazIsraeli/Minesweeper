@@ -5,6 +5,7 @@ const MINE = '<img src="images/mine.png">'
 const FLAG = '<img src="images/flag.png">'
 const LIFE = '👻'
 const HINT = '<img src="images/hint.png">'
+const SAFE_CLICK = '<img src="images/safe.png">'
 
 var gGame
 var gBoard //start with 4X4 board
@@ -15,14 +16,20 @@ var gLives
 var gHintsCount
 var gIsHintOn
 var gHintedCells
+var gSafeClicksCount
+var gIsSafeClickOn
+var gScore
 
 var gLevel = { size: 4, mines: 2 }
 
 function onInit() {
+  gScore = 0
   gLives = 3
   gHintsCount = 3
+  gSafeClicksCount = 3
   gIsHintOn = false
   gHintedCells = []
+  gIsSafeClickOn = false
   gShownMines = 0
   var elLife = document.querySelector('.life span')
   var strHTML = ''
@@ -37,6 +44,13 @@ function onInit() {
     strHTML += `<span class="hint" onclick="onHint(this)">${HINT}</span>`
   }
   elHints.innerHTML = strHTML
+
+  var elSafeClicks = document.querySelector('.safe-clicks')
+  var strHTML = ''
+  for (let i = 0; i < gSafeClicksCount; i++) {
+    strHTML += `<span class="safe-click" onclick="onSafeClick(this)">${SAFE_CLICK}</span>`
+  }
+  elSafeClicks.innerHTML = strHTML
 
   gGame = {
     isOn: false,
@@ -186,8 +200,8 @@ function gameOver(isPlayerWin) {
   if (isPlayerWin) {
     console.log('congrats! You won!')
     document.querySelector('.game-icon img').src = 'images/win-face.png'
-    //TODO what happens when wins?
-    //when the player lost
+    gScore = gGame.secsPassed
+    saveBestScores()
   } else if (!isPlayerWin || gLives < 0 || gShownMines === gMines.length) {
     console.log('Too bad.. you lost')
     document.querySelector('.game-icon img').src = 'images/crying-face.png'
@@ -198,6 +212,18 @@ function gameOver(isPlayerWin) {
   gGame.isOn = false
   //clearing active intervals
   clearInterval(gTimeInterval)
+}
+
+function saveBestScores() {
+  //TODO - SAVE BEST SCORES HERE
+  // if (typeof(Storage) !== "undefined") {
+  //   // Store
+  //   localStorage.setItem("lastname", "Smith");
+  //   // Retrieve
+  //   document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+  // } else {
+  //   document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+  // }
 }
 
 function buildBoard(size) {
@@ -360,6 +386,8 @@ function reduceLife() {
 }
 
 function onHint(elHint) {
+  if (gIsSafeClickOn) return
+  if (gIsHintOn && !elHint.classList.contains('hint-clicked')) return
   if (elHint.classList.contains('hint-clicked')) {
     elHint.classList.remove('hint-clicked')
     elHint.classList.add('hint')
@@ -411,6 +439,42 @@ function reduceHintCount() {
 
   gIsHintOn = false
 }
+
+function onSafeClick(elSafe) {
+  if (gIsHintOn) return
+  if (gIsSafeClickOn && !elSafe.classList.contains('safe-click-clicked')) return
+
+  if (elSafe.classList.contains('safe-click-clicked')) {
+    elSafe.classList.remove('safe-click-clicked')
+    gIsSafeClickOn = false
+  } else {
+    elSafe.classList.add('safe-click-clicked')
+    gIsSafeClickOn = true
+  }
+  showSafeCell()
+}
+
+function showSafeCell() {
+  var emptyLocation = getEmptyLocation(gBoard)
+  if (!emptyLocation) reduceSafeClicksCount()
+
+  renderCell({ i: emptyLocation.i, j: emptyLocation.j }, 'S')
+  reduceSafeClicksCount()
+}
+function reduceSafeClicksCount() {
+  gSafeClicksCount--
+
+  var elSafeClicks = document.querySelector('.safe-clicks')
+  var strHTML = ''
+  for (let i = 0; i < gSafeClicksCount; i++) {
+    strHTML += `<span class="safe-click" onclick="onSafeClick(this)">${SAFE_CLICK}</span>`
+  }
+  strHTML = !gSafeClicksCount ? 'Out of safe clicks...' : strHTML
+  elSafeClicks.innerHTML = strHTML
+
+  gIsSafeClickOn = false
+}
+
 // function showNegs(board, cellI, cellJ) {
 //   var negs = []
 //   var positions = []
