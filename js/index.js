@@ -222,8 +222,7 @@ function getEmptyLocations() {
 
 function createMine() {
   const cell = {
-    // isShown: false,
-    isShown: true,
+    isShown: false,
     isMine: true,
     isMarked: false,
   }
