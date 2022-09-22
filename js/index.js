@@ -20,9 +20,9 @@ function onInit() {
   var elLife = document.querySelector('.life span')
   var strHTML = ''
   for (let i = 0; i < gLives; i++) {
-    strHTML += LIFE
+    strHTML += `<span>${LIFE}</span>`
   }
-  elLife.innerText = strHTML
+  elLife.innerHTML = strHTML
 
   gGame = {
     isOn: false,
@@ -174,7 +174,8 @@ function gameOver(isPlayerWin) {
     //when the player lost
   } else if (!isPlayerWin || gLives < 0 || gShownMines === gMines.length) {
     console.log('Too bad.. you lost')
-    document.querySelector('.game-icon img').src = 'images/lose-face.png'
+    document.querySelector('.game-icon img').src = 'images/crying-face.png'
+    document.querySelector('.game-icon img').style = 'width:40px;height:40px;'
   }
   //resetting global settings
   gGame.secsPassed = 0
@@ -339,9 +340,9 @@ function reduceLife() {
   var elLife = document.querySelector('.life span')
   var strHTML = ''
   for (let i = 0; i < gLives; i++) {
-    strHTML += LIFE
+    strHTML += `<span>${LIFE}</span>`
   }
-  elLife.innerText = strHTML
+  elLife.innerHTML = strHTML
 }
 
 // function showNegs(board, cellI, cellJ) {

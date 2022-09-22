@@ -1,7 +1,7 @@
 body {
   text-align: center;
   background-image: url('../images/bcgimg.jpg');
-  padding-bottom: 35px 0;
+  padding-bottom: 35px;
 }
 
 footer {
@@ -67,12 +67,18 @@ td img {
   position: relative;
   top: 6px;
   margin: 0;
-  height: 30px;
-  width: 30px;
+  height: 40px;
+  width: 40px;
+  border-radius: 50%;
 }
 .game-icon img:hover {
   cursor: pointer;
-  transform: rotate(180deg);
+  position: relative;
+  top: 1px;
+  left: 1px;
+  box-shadow: -1px 40px 21px -4px rgba(0, 0, 0, 0.81);
+  /* box-shadow: 1px 1px 18px 17px rgba(207, 198, 65, 0.81); */
+  /* transform: rotate(180deg); */
 }
 
 .time {
@@ -95,6 +101,11 @@ td img {
 
 .life:hover {
   cursor: default;
+}
+.life span span:hover {
+  position: relative;
+  top: -10px;
+  box-shadow: -1px 40px 11px -10px rgba(0, 0, 0, 0.81);
 }
 .levels-container:hover {
   cursor: default;
