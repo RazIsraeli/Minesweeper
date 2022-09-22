@@ -43,7 +43,7 @@ function onInit() {
 
 function onCellClicked(elCell, cellI, cellJ) {
   //first click to start time and prevent clicking shown cells
-  checkFirstClick()
+  checkFirstClick(cellI, cellJ)
   if (!gGame.isOn) return
   if (gBoard[cellI][cellJ].isShown) return
   if (gBoard[cellI][cellJ].isMarked) return
@@ -91,7 +91,9 @@ function onCellClicked(elCell, cellI, cellJ) {
     // update DOM
     const value = gBoard[cellI][cellJ].mineNegsCount
     elCell.innerText = value
-    elCell.classList.add('shown')
+    document.querySelector(`.cell-${cellI}-${cellJ}`).classList.add('shown')
+    // elCell.classList.add('shown')
+    console.log('added shown to elCell')
     renderCell({ i: cellI, j: cellJ }, value)
     if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
       checkGameOver()
@@ -146,9 +148,9 @@ function ignoreshownCount(cellI, cellJ) {
   }
 }
 
-function checkFirstClick() {
+function checkFirstClick(cellI, cellJ) {
   if (!gTimeInterval) {
-    createMines()
+    createMines(cellI, cellJ)
     updateNegs()
     renderBoard(gBoard, '.board-container')
     console.table(gBoard)
@@ -226,8 +228,8 @@ function setMinesNegsCount(board, rowIdx, colIdx) {
   return mineNegsCount
 }
 
-function createMines() {
-  var emptyLocations = getEmptyLocations()
+function createMines(cellI, cellJ) {
+  var emptyLocations = getEmptyLocations(cellI, cellJ)
 
   for (let i = 0; i < gLevel.mines; i++) {
     var randIdx = getRandomInt(0, emptyLocations.length)
@@ -239,10 +241,12 @@ function createMines() {
   }
 }
 
-function getEmptyLocations() {
+function getEmptyLocations(cellI, cellJ) {
   var emptyLocations = []
   for (let i = 0; i < gBoard.length; i++) {
     for (let j = 0; j < gBoard[0].length; j++) {
+      if (!i === cellI && j === cellJ) return
+
       emptyLocations.push({ i, j })
     }
   }
