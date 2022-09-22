@@ -35,8 +35,8 @@ function onInit() {
   gMines = []
   document.addEventListener('contextmenu', (event) => event.preventDefault())
   gBoard = buildBoard(gLevel.size)
-  createMines()
-  updateNegs()
+  // createMines()
+  // updateNegs()
   console.table(gBoard)
   renderBoard(gBoard, '.board-container')
 }
@@ -148,6 +148,10 @@ function ignoreshownCount(cellI, cellJ) {
 
 function checkFirstClick() {
   if (!gTimeInterval) {
+    createMines()
+    updateNegs()
+    renderBoard(gBoard, '.board-container')
+    console.table(gBoard)
     gGame.isOn = true
     const startTime = Date.now()
     //update model:
