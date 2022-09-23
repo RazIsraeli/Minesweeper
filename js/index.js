@@ -458,9 +458,16 @@ function onSafeClick(elSafe) {
 
 function showSafeCell() {
   var emptyLocation = getEmptyLocation(gBoard)
-  if (!emptyLocation) reduceSafeClicksCount()
+  if (!emptyLocation) {
+    reduceSafeClicksCount()
+    return
+  }
+  if (!gGame.isOn && gSafeClicksCount < 3) return
 
   renderCell({ i: emptyLocation.i, j: emptyLocation.j }, 'S')
+  setTimeout(() => {
+    renderBoard(gBoard, '.board-container')
+  }, 1500)
   reduceSafeClicksCount()
 }
 function reduceSafeClicksCount() {
