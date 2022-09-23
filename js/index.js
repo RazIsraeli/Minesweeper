@@ -169,6 +169,7 @@ function onCellMarked(elCell, cellI, cellJ) {
     if (Math.pow(gLevel.size, 2) === gGame.shownCount + gGame.markedCount)
       checkGameOver()
   }
+  renderCell({ i: cellI, j: cellJ }, elCell.innerHTML)
 }
 
 function ignoreshownCount(cellI, cellJ) {
@@ -405,6 +406,7 @@ function revealCells(cellI, cellJ) {
 
     for (let j = cellJ - 1; j <= cellJ + 1; j++) {
       if (j < 0 || j >= gBoard[0].length) continue
+      if (gBoard[i][j].isShown) continue
       gHintedCells.push({ i: i, j: j })
       // update model
       gBoard[i][j].isShown = true

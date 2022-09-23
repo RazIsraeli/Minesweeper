@@ -3,9 +3,6 @@ body {
   background-image: url('../images/bcgimg.jpg');
   padding-bottom: 35px;
 }
-header:hover {
-  cursor: default;
-}
 
 footer {
   position: fixed;
@@ -125,16 +122,12 @@ td img {
 }
 
 .extras-container {
-  background-color: rgba(37, 90, 98, 0.4);
   position: absolute;
   top: 230px;
   right: 1px;
-  height: 250px;
+  height: 400px;
   width: 120px;
-  border: 1px dashed rgb(37, 90, 98);
-  border-top-left-radius: 30px;
-  border-bottom-left-radius: 30px;
-  box-shadow: 1px -6px 33px 14px rgba(37, 90, 98, 0.81);
+  border: 1px solid black;
   padding: 0 auto;
 }
 
