@@ -9,14 +9,15 @@ function renderBoard(board, selector) {
       var className = `cell cell-${i}-${j}`
       var cellContent = ''
       if (cell.mineNegsCount && !cell.isMine) {
-        className += ' number'
+        // className += ' number'
         cellContent = cell.mineNegsCount
       } else if (cell.isMine) {
-        className += ' mine'
+        // className += ' mine'
         cellContent = MINE
       }
-      cellContent = cell.isShown ? cellContent : ''
+      if (cell.isMarked) cellContent = FLAG
       if (cell.isShown) className += ' shown'
+      cellContent = cell.isShown || cell.isMarked ? cellContent : ''
 
       if (i === 0) {
         strHTML += `<td class="${className}" onclick="onCellClicked(this,${i},${j})" oncontextmenu="onCellMarked(this,${i},${j})" style="width:40px; height:40px;">${cellContent}</td>`
@@ -43,10 +44,8 @@ function getEmptyLocation(board) {
   var emptyLocations = []
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[0].length; j++) {
-      console.log('board[i][j]: ', board[i][j])
       if (!board[i][j].isMine && !gBoard[i][j].isShown) {
         var emptyLocation = { i: i, j: j }
-        console.log('emptyLocation: ', emptyLocation)
         emptyLocations.push(emptyLocation)
       }
     }

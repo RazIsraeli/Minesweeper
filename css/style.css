@@ -3,6 +3,9 @@ body {
   background-image: url('../images/bcgimg.jpg');
   padding-bottom: 35px;
 }
+header:hover {
+  cursor: default;
+}
 
 footer {
   position: fixed;
@@ -107,7 +110,8 @@ td img {
   display: inline-block;
 }
 
-.levels {
+.levels,
+.place-mines button {
   display: inline-block;
   border: 1px solid black;
   border-radius: 25px;
@@ -115,19 +119,24 @@ td img {
   font-weight: 700;
   width: 85px;
 }
-.levels:hover {
+.levels:hover,
+.place-mines button:hover {
   cursor: pointer;
   background-color: black;
   color: white;
 }
 
 .extras-container {
+  background-color: rgba(37, 90, 98, 0.4);
   position: absolute;
   top: 230px;
   right: 1px;
-  height: 400px;
+  height: 350px;
   width: 120px;
-  border: 1px solid black;
+  border: 1px dashed rgb(37, 90, 98);
+  border-top-left-radius: 30px;
+  border-bottom-left-radius: 30px;
+  box-shadow: 1px -6px 33px 14px rgba(37, 90, 98, 0.81);
   padding: 0 auto;
 }
 
@@ -139,7 +148,8 @@ td img {
 
 .hints,
 .safe-clicks,
-.safe-click-container {
+.safe-click-container,
+.place-mines-container {
   text-align: left;
 }
 
@@ -167,6 +177,11 @@ td img {
 .hint-clicked:hover,
 .safe-click-clicked:hover {
   cursor: pointer;
+}
+
+.place-mines button {
+  background-color: transparent;
+  border: 1px solid black;
 }
 
 .shown {

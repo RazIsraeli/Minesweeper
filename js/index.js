@@ -19,6 +19,7 @@ var gHintedCells
 var gSafeClicksCount
 var gIsSafeClickOn
 var gScore
+var gIsPlaceMines
 
 var gLevel = { size: 4, mines: 2 }
 
@@ -30,6 +31,7 @@ function onInit() {
   gIsHintOn = false
   gHintedCells = []
   gIsSafeClickOn = false
+  gIsPlaceMines = false
   gShownMines = 0
   var elLife = document.querySelector('.life span')
   var strHTML = ''
@@ -406,7 +408,7 @@ function revealCells(cellI, cellJ) {
 
     for (let j = cellJ - 1; j <= cellJ + 1; j++) {
       if (j < 0 || j >= gBoard[0].length) continue
-      if (gBoard[i][j].isShown) continue
+      if (gBoard[i][j].isShown || gBoard[i][j].isMarked) continue
       gHintedCells.push({ i: i, j: j })
       // update model
       gBoard[i][j].isShown = true
@@ -483,6 +485,14 @@ function reduceSafeClicksCount() {
 
   gIsSafeClickOn = false
 }
+
+// function onPlaceMines() {
+
+//   if (!gGame.isOn && gIsPlaceMines) {
+//     var elPlaceMines = document.querySelector('.place-mines-container')
+//     elPlaceMines.style.display = 'none'
+//     return
+// }
 
 // function showNegs(board, cellI, cellJ) {
 //   var negs = []
