@@ -52,7 +52,6 @@ function getEmptyLocation(board) {
   }
   if (!emptyLocations.length) return null
   const randIdx = getRandomInt(0, emptyLocations.length)
-  console.log('emptyLocations[randIdx]: ', emptyLocations[randIdx])
   return emptyLocations[randIdx]
 }
 

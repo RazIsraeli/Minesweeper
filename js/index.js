@@ -20,6 +20,7 @@ var gSafeClicksCount
 var gIsSafeClickOn
 var gScore
 var gIsPlaceMines
+var gManualMinesCount
 
 var gLevel = { size: 4, mines: 2 }
 
@@ -32,7 +33,9 @@ function onInit() {
   gHintedCells = []
   gIsSafeClickOn = false
   gIsPlaceMines = false
+  gManualMinesCount = 0
   gShownMines = 0
+  showPlaceMines()
   var elLife = document.querySelector('.life span')
   var strHTML = ''
   for (let i = 0; i < gLives; i++) {
@@ -69,6 +72,17 @@ function onInit() {
 }
 
 function onCellClicked(elCell, cellI, cellJ) {
+  if (gIsPlaceMines && gMines.length < gLevel.mines) {
+    if (gMines.includes(gBoard[cellI][cellJ])) return
+    gBoard[cellI][cellJ].isMine = true
+    gMines.push(gBoard[cellI][cellJ])
+    elCell.innerHTML = MINE
+    elCell.style.borderColor = 'red'
+    showMinesCount()
+    console.log('Mine placed in cell ' + cellI + ' ' + cellJ)
+    if (gMines.length === gLevel.mines) checkFirstClick(cellI, cellJ)
+    return
+  }
   //first click to start time and prevent clicking shown cells
   checkFirstClick(cellI, cellJ)
   if (!gGame.isOn) return
@@ -183,7 +197,8 @@ function ignoreshownCount(cellI, cellJ) {
 
 function checkFirstClick(cellI, cellJ) {
   if (!gTimeInterval) {
-    createMines(cellI, cellJ)
+    hidePlaceMines()
+    if (!gIsPlaceMines) createMines(cellI, cellJ)
     updateNegs()
     renderBoard(gBoard, '.board-container')
     console.table(gBoard)
@@ -196,6 +211,7 @@ function checkFirstClick(cellI, cellJ) {
       document.querySelector('.time span').innerText = gGame.secsPassed
     }, 1000)
   }
+  gIsPlaceMines = false
 }
 
 function gameOver(isPlayerWin) {
@@ -213,6 +229,7 @@ function gameOver(isPlayerWin) {
   //resetting global settings
   gGame.secsPassed = 0
   gGame.isOn = false
+  gMines = 0
   //clearing active intervals
   clearInterval(gTimeInterval)
 }
@@ -254,6 +271,8 @@ function restart() {
   document.querySelector('.time span').innerText = gGame.secsPassed
   document.querySelector('.game-icon img').src = 'images/smiley-regular.png'
   gTimeInterval = 0
+
+  showPlaceMines()
   onInit()
 }
 
@@ -486,13 +505,30 @@ function reduceSafeClicksCount() {
   gIsSafeClickOn = false
 }
 
-// function onPlaceMines() {
+function hidePlaceMines() {
+  var elPlaceMines = document.querySelector('.place-mines-container')
+  elPlaceMines.style.display = 'none'
+}
+function showPlaceMines() {
+  var elPlaceMines = document.querySelector('.place-mines-container')
+  elPlaceMines.style.display = 'block'
+  elPlaceMines.innerHTML = `<h3 class="place-mines-header">Place Mines:</h3>
+  <div class="place-mines"><button onclick="onPlaceMines()">Manually place mines</button></div>`
+}
 
-//   if (!gGame.isOn && gIsPlaceMines) {
-//     var elPlaceMines = document.querySelector('.place-mines-container')
-//     elPlaceMines.style.display = 'none'
-//     return
-// }
+function onPlaceMines() {
+  gIsPlaceMines = true
+  console.log('gIsPlaceMines: ', gIsPlaceMines)
+  showMinesCount()
+}
+
+function showMinesCount() {
+  var elPlaceMines = document.querySelector('.place-mines')
+  elPlaceMines.innerHTML = `<span>Mines left: ${
+    gLevel.mines - gMines.length
+  }</span>`
+  elPlaceMines.style.display = 'block'
+}
 
 // function showNegs(board, cellI, cellJ) {
 //   var negs = []
