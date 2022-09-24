@@ -12,7 +12,7 @@ function renderBoard(board, selector) {
         // className += ' number'
         cellContent = cell.mineNegsCount
       } else if (cell.isMine) {
-        // className += ' mine'
+        className += ' mine'
         cellContent = MINE
       }
       if (cell.isMarked) cellContent = FLAG
