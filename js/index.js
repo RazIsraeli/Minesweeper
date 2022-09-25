@@ -21,6 +21,9 @@ var gIsSafeClickOn
 var gScore
 var gIsPlaceMines
 var gManualMinesCount
+var gLevel1BestScore
+var gLevel2BestScore
+var gLevel3BestScore
 
 var gLevel = { size: 4, mines: 2 }
 
@@ -35,7 +38,11 @@ function onInit() {
   gIsPlaceMines = false
   gManualMinesCount = 0
   gShownMines = 0
+  gLevel1BestScore = gLevel1BestScore ? gLevel1BestScore : 99999999
+  gLevel2BestScore = gLevel2BestScore ? gLevel2BestScore : 99999999
+  gLevel3BestScore = gLevel3BestScore ? gLevel3BestScore : 99999999
   showPlaceMines()
+  updateBestScore()
   var elLife = document.querySelector('.life span')
   var strHTML = ''
   for (let i = 0; i < gLives; i++) {
@@ -220,7 +227,8 @@ function gameOver(isPlayerWin) {
     console.log('congrats! You won!')
     document.querySelector('.game-icon img').src = 'images/win-face.png'
     gScore = gGame.secsPassed
-    saveBestScores()
+    console.log('gScore: ', gScore)
+    updateBestScore()
   } else if (!isPlayerWin || gLives < 0 || gShownMines === gMines.length) {
     console.log('Too bad.. you lost')
     document.querySelector('.game-icon img').src = 'images/crying-face.png'
@@ -232,18 +240,6 @@ function gameOver(isPlayerWin) {
   gMines = 0
   //clearing active intervals
   clearInterval(gTimeInterval)
-}
-
-function saveBestScores() {
-  //TODO - SAVE BEST SCORES HERE
-  // if (typeof(Storage) !== "undefined") {
-  //   // Store
-  //   localStorage.setItem("lastname", "Smith");
-  //   // Retrieve
-  //   document.getElementById("result").innerHTML = localStorage.getItem("lastname");
-  // } else {
-  //   document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
-  // }
 }
 
 function buildBoard(size) {
@@ -344,7 +340,7 @@ function changeLevel(level) {
       gLevel = { size: 4, mines: 2 }
       break
     case 1:
-      gLevel = { size: 8, mines: 18 }
+      gLevel = { size: 8, mines: 14 }
       break
     case 2:
       gLevel = { size: 12, mines: 32 }
@@ -528,6 +524,48 @@ function showMinesCount() {
     gLevel.mines - gMines.length
   }</span>`
   elPlaceMines.style.display = 'block'
+}
+
+function updateBestScore() {
+  var currBestScore
+  var level
+
+  switch (gLevel.mines) {
+    case 2:
+      currBestScore = gLevel1BestScore
+      level = 'Beginner'
+      break
+    case 14:
+      currBestScore = gLevel2BestScore
+      level = 'Medium'
+      break
+    case 32:
+      currBestScore = gLevel3BestScore
+      level = 'Expert'
+      break
+  }
+
+  switch (level) {
+    case 'Beginner':
+      if (gScore && gScore < currBestScore) {
+        console.log('New best score! ' + gScore)
+        localStorage.setItem('bestScoreLevel1', gScore)
+      } else if (currBestScore === 99999999) {
+        console.log('No record yet')
+      }
+
+      break
+    case 'Medium':
+      if (gScore && gScore < currBestScore) {
+        console.log('New best score! ' + gScore)
+        localStorage.setItem('bestScoreLevel1', gScore)
+      } else if (currBestScore === 99999999) {
+        console.log('No record yet')
+      }
+      break
+    case 'Beginner':
+      break
+  }
 }
 
 // function showNegs(board, cellI, cellJ) {
