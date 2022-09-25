@@ -26,6 +26,7 @@ var gLevel2BestScore
 var gLevel3BestScore
 
 var gLevel = { size: 4, mines: 2 }
+loadDefaultScores()
 
 function onInit() {
   gScore = 0
@@ -163,7 +164,10 @@ function checkGameOver() {
     else return
   }
 
-  if (markedMines === gMines.length) {
+  if (
+    markedMines === gMines.length &&
+    gLevel.size ** 2 === gGame.shownCount + gGame.markedCount
+  ) {
     gGame.isWin = true
     gameOver(true)
   }
@@ -333,23 +337,25 @@ function updateNegs() {
 }
 
 function changeLevel(level) {
-  // var gameLevel = {}
-
   switch (level) {
     case 0:
       gLevel = { size: 4, mines: 2 }
+      document.querySelector('.best-score span').innerText =
+        localStorage.getItem('bestScoreLevel1')
       break
     case 1:
       gLevel = { size: 8, mines: 14 }
+      document.querySelector('.best-score span').innerText =
+        localStorage.getItem('bestScoreLevel2')
       break
     case 2:
       gLevel = { size: 12, mines: 32 }
-      break
-    default:
-      gLevel = { size: 4, mines: 2 }
+      document.querySelector('.best-score span').innerText =
+        localStorage.getItem('bestScoreLevel3')
       break
   }
 
+  updateBestScore()
   restart()
 }
 
@@ -360,7 +366,6 @@ function expandShown(board, cellI, cellJ) {
   var elCell = document.querySelector(`.cell-${cellI}-${cellJ}`)
   elCell.classList.add('shown')
   renderCell({ i: cellI, j: cellJ }, '')
-  //check i and j growing only (direction bottom-right)
   for (let i = cellI - 1; i <= cellI + 1; i++) {
     if (i < 0 || i >= board.length) continue
 
@@ -385,6 +390,7 @@ function expandShown(board, cellI, cellJ) {
       }
     }
   }
+  checkGameOver()
 }
 
 function reduceLife() {
@@ -549,7 +555,11 @@ function updateBestScore() {
     case 'Beginner':
       if (gScore && gScore < currBestScore) {
         console.log('New best score! ' + gScore)
+        // update local storage
         localStorage.setItem('bestScoreLevel1', gScore)
+        // updae DOM
+        var elBestScore = document.querySelector('.best-score span')
+        elBestScore.innerText = gScore
       } else if (currBestScore === 99999999) {
         console.log('No record yet')
       }
@@ -558,7 +568,15 @@ function updateBestScore() {
     case 'Medium':
       if (gScore && gScore < currBestScore) {
         console.log('New best score! ' + gScore)
-        localStorage.setItem('bestScoreLevel1', gScore)
+        localStorage.setItem('bestScoreLevel2', gScore)
+      } else if (currBestScore === 99999999) {
+        console.log('No record yet')
+      }
+      break
+    case 'Expert':
+      if (gScore && gScore < currBestScore) {
+        console.log('New best score! ' + gScore)
+        localStorage.setItem('bestScoreLevel3', gScore)
       } else if (currBestScore === 99999999) {
         console.log('No record yet')
       }
@@ -566,6 +584,12 @@ function updateBestScore() {
     case 'Beginner':
       break
   }
+}
+
+function loadDefaultScores() {
+  localStorage.setItem('bestScoreLevel1', 999)
+  localStorage.setItem('bestScoreLevel2', 999)
+  localStorage.setItem('bestScoreLevel3', 999)
 }
 
 // function showNegs(board, cellI, cellJ) {
