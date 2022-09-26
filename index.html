@@ -21,15 +21,16 @@
     <div class="main-game">
         <div class="game-info">
             <h2 class="time">Time: <span>0</span>(s)&nbsp;&nbsp;</h2>
-            <div class="game-icon" onclick="restart()"><img src="images/smiley-regular.png">&nbsp;&nbsp;</div>
+            <div class="game-icon" onclick="restart()" title="restart"><img src="images/smiley-regular.png">&nbsp;&nbsp;
+            </div>
             <h2 class="life">Life: <span></span></h2>
         </div>
         <div class="additional-features">
             <div class="levels-container">
                 <h2>Levels</h2>
-                <div class="levels" onclick="changeLevel(0)">Beginner</div>
-                <div class="levels" onclick="changeLevel(1)">Advanced</div>
-                <div class="levels" onclick="changeLevel(2)">Expert</div>
+                <div class="levels" onclick="changeLevel(0)" title="change level">Beginner</div>
+                <div class="levels" onclick="changeLevel(1)" title="change level">Advanced</div>
+                <div class="levels" onclick="changeLevel(2)" title="change level">Expert</div>
             </div>
         </div>
         <div class="board-container"></div>
@@ -40,11 +41,11 @@
                 <h1> Extras</h1>
                 <div class="hints-container">
                     <h3 class="hints-header">Hints:</h3>
-                    <div class="hints"></div>
+                    <div class="hints" title="click on a hint and then on the board"></div>
                 </div>
                 <div class="safe-click-container">
                     <h3 class="safe-click-header">Safe Clicks:</h3>
-                    <div class="safe-clicks"></div>
+                    <div class="safe-clicks" title="mark a safe cell on the board for 1 second"></div>
                 </div>
                 <div class="place-mines-container">
                     <h3 class="place-mines-header">Place Mines:</h3>

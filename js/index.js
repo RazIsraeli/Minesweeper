@@ -47,7 +47,7 @@ function onInit() {
   var elLife = document.querySelector('.life span')
   var strHTML = ''
   for (let i = 0; i < gLives; i++) {
-    strHTML += `<span>${LIFE}</span>`
+    strHTML += `<span title="life">${LIFE}</span>`
   }
   elLife.innerHTML = strHTML
 
